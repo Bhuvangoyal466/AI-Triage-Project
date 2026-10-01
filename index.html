@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Triage Buddy 🩺</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --pink: #ff5fa2;
+                --purple: #7c4dff;
+                --blue: #00c2ff;
+                --yellow: #ffd23f;
+                --green: #2ee59d;
+                --orange: #ff9f1c;
+                --red: #ff4757;
+                --ink: #2d1b69;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                font-family: "Fredoka", "Comic Sans MS", Arial, sans-serif;
+                color: var(--ink);
+                min-height: 100vh;
+                background: linear-gradient(
+                    120deg,
+                    #a18cff,
+                    #5ee7ff,
+                    #ffa6e7,
+                    #ffe66d
+                );
+                background-size: 400% 400%;
+                animation: bg 14s ease infinite;
+                overflow-x: hidden;
+            }
+            @keyframes bg {
+                50% {
+                    background-position: 100% 50%;
+                }
+            }
+            .float {
+                position: fixed;
+                font-size: 2rem;
+                opacity: 0.5;
+                animation: fl 9s linear infinite;
+                pointer-events: none;
+                bottom: -60px;
+            }
+            @keyframes fl {
+                to {
+                    transform: translateY(-115vh) rotate(360deg);
+                }
+            }
+            .wrap {
+                max-width: 760px;
+                margin: auto;
+                padding: 18px;
+                position: relative;
+            }
+            header {
+                text-align: center;
+                color: #fff;
+                text-shadow: 0 3px 0 rgba(45, 27, 105, 0.35);
+            }
+            .bot {
+                font-size: 84px;
+                display: inline-block;
+                animation: bob 1.6s ease-in-out infinite;
+                cursor: pointer;
+            }
+            @keyframes bob {
+                50% {
+                    transform: translateY(-14px) rotate(8deg);
+                }
+            }
+            h1 {
+                margin: 0;
+                font-size: clamp(2.2rem, 8vw, 3.4rem);
+                letter-spacing: 1px;
+            }
+            .bubble {
+                background: #fff;
+                color: var(--ink);
+                display: inline-block;
+                padding: 10px 18px;
+                border-radius: 22px;
+                margin-top: 8px;
+                text-shadow: none;
+                font-weight: 600;
+                box-shadow: 0 5px 0 rgba(45, 27, 105, 0.2);
+            }
+            .card {
+                background: #fff;
+                border-radius: 28px;
+                padding: 18px 20px 22px;
+                margin: 18px 0;
+                box-shadow: 0 8px 0 rgba(45, 27, 105, 0.18);
+                border: 4px solid var(--c, var(--purple));
+            }
+            .step {
+                display: inline-block;
+                background: var(--c, var(--purple));
+                color: #fff;
+                padding: 6px 16px;
+                border-radius: 999px;
+                font-weight: 700;
+                margin-bottom: 10px;
+                font-size: 1.05rem;
+            }
+            input[type="number"],
+            textarea,
+            select {
+                width: 100%;
+                padding: 12px 14px;
+                border: 3px solid #e3dcff;
+                border-radius: 16px;
+                font: inherit;
+                font-size: 1.05rem;
+                color: var(--ink);
+            }
+            input:focus,
+            textarea:focus,
+            select:focus {
+                outline: none;
+                border-color: var(--blue);
+                box-shadow: 0 0 0 4px #bfefff;
+            }
+            textarea {
+                height: 84px;
+                resize: none;
+            }
+            .row {
+                display: grid;
+                grid-template-columns: 1fr 1.4fr;
+                gap: 12px;
+            }
+            @media (max-width: 520px) {
+                .row {
+                    grid-template-columns: 1fr;
+                }
+            }
+            .chips {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 9px;
+            }
+            .chip {
+                padding: 9px 15px;
+                border-radius: 999px;
+                background: #f0ebff;
+                cursor: pointer;
+                font-weight: 600;
+                border: 3px solid transparent;
+                user-select: none;
+                transition: transform 0.15s;
+            }
+            .chip:hover {
+                transform: scale(1.08) rotate(-2deg);
+            }
+            .chip.on {
+                background: var(--purple);
+                color: #fff;
+                border-color: var(--ink);
+                transform: scale(1.05);
+            }
+            .ex {
+                background: var(--yellow);
+            }
+            .ex:nth-child(2) {
+                background: var(--green);
+            }
+            .ex:nth-child(3) {
+                background: #ffb3d1;
+            }
+            #face {
+                font-size: 4rem;
+                text-align: center;
+                transition: transform 0.2s;
+            }
+            #sevtxt {
+                text-align: center;
+                font-weight: 700;
+                font-size: 1.2rem;
+            }
+            input[type="range"] {
+                width: 100%;
+                height: 14px;
+                border-radius: 99px;
+                appearance: none;
+                -webkit-appearance: none;
+                background: linear-gradient(
+                    90deg,
+                    #2ee59d,
+                    #ffd23f,
+                    #ff9f1c,
+                    #ff4757
+                );
+                outline: none;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+                background: #fff;
+                border: 5px solid var(--ink);
+                cursor: grab;
+            }
+            input[type="range"]::-moz-range-thumb {
+                width: 26px;
+                height: 26px;
+                border-radius: 50%;
+                background: #fff;
+                border: 5px solid var(--ink);
+            }
+            .go {
+                width: 100%;
+                padding: 18px;
+                font: inherit;
+                font-size: 1.5rem;
+                font-weight: 700;
+                border: 0;
+                border-radius: 22px;
+                color: #fff;
+                cursor: pointer;
+                background: linear-gradient(90deg, var(--pink), var(--purple));
+                box-shadow: 0 7px 0 #4b2bb5;
+                transition: all 0.1s;
+            }
+            .go:hover {
+                filter: brightness(1.1);
+            }
+            .go:active {
+                transform: translateY(6px);
+                box-shadow: 0 1px 0 #4b2bb5;
+            }
+            #loading {
+                display: none;
+                text-align: center;
+                color: #fff;
+                font-size: 1.5rem;
+                font-weight: 700;
+                text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+            }
+            #loading span {
+                display: inline-block;
+                font-size: 3.5rem;
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+            #result {
+                display: none;
+                text-align: center;
+                animation: pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+            }
+            @keyframes pop {
+                from {
+                    transform: scale(0.3);
+                    opacity: 0;
+                }
+            }
+            #big {
+                font-size: 5.5rem;
+                line-height: 1;
+            }
+            #badge {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #fff;
+                display: inline-block;
+                padding: 6px 24px;
+                border-radius: 999px;
+                margin: 6px 0;
+            }
+            .meter {
+                display: flex;
+                gap: 6px;
+                margin: 14px 0;
+            }
+            .meter div {
+                flex: 1;
+                height: 18px;
+                border-radius: 99px;
+                opacity: 0.25;
+            }
+            .meter div.here {
+                opacity: 1;
+                transform: scaleY(1.7);
+                box-shadow: 0 3px 0 rgba(0, 0, 0, 0.25);
+            }
+            .pill {
+                display: inline-block;
+                background: #fff;
+                padding: 8px 16px;
+                border-radius: 999px;
+                margin: 5px;
+                border: 3px dashed var(--c);
+                font-weight: 600;
+            }
+            ul {
+                text-align: left;
+                font-size: 1.1rem;
+                padding-left: 26px;
+            }
+            .warn {
+                background: #fff;
+                border-radius: 18px;
+                padding: 10px 16px;
+                text-align: center;
+                font-size: 0.9rem;
+                border: 3px solid var(--yellow);
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            ["🩺", "💊", "❤️", "⭐", "🧬", "🩹", "🌈", "💉"].forEach((e, i) => {
+                const s = document.createElement("div");
+                s.className = "float";
+                s.textContent = e;
+                s.style.left = i * 13 + 3 + "%";
+                s.style.animationDelay = i * 1.4 + "s";
+                s.style.animationDuration = 8 + i + "s";
+                document.body.appendChild(s);
+            });
+        </script>
+        <div class="wrap">
+            <header>
+                <div
+                    class="bot"
+                    onclick="
+                        this.textContent = ['🤖', '👾', '🦾', '🧠'][
+                            Math.floor(Math.random() * 4)
+                        ]
+                    "
+                >
+                    🤖
+                </div>
+                <h1>Triage Buddy</h1>
+                <div class="bubble">
+                    Hi! I'm Dr. Buddy! Tell me the symptoms and I'll sort how
+                    urgent it is! 🕵️
+                </div>
+            </header>
+
+            <div class="card" style="--c: var(--orange)">
+                <span class="step">⚡ Quick start: tap an example!</span>
+                <div class="chips">
+                    <span class="chip ex" onclick="example(1)"
+                        >💔 Chest pressure</span
+                    >
+                    <span class="chip ex" onclick="example(2)"
+                        >🤧 Runny nose</span
+                    >
+                    <span class="chip ex" onclick="example(3)"
+                        >🤒 High fever</span
+                    >
+                </div>
+            </div>
+
+            <div class="card" style="--c: var(--blue)">
+                <span class="step">1️⃣ Who is the patient?</span>
+                <div class="row">
+                    <input
+                        type="number"
+                        id="age"
+                        min="0"
+                        max="120"
+                        placeholder="🎂 Age"
+                    />
+                    <select id="duration">
+                        <option>⏱️ Just started</option>
+                        <option>30 minutes</option>
+                        <option>A few hours</option>
+                        <option>1-2 days</option>
+                        <option>More than a week</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card" style="--c: var(--pink)">
+                <span class="step">2️⃣ What's wrong?</span>
+                <textarea
+                    id="symptoms"
+                    placeholder="Type here... e.g. my tummy hurts and I feel dizzy 🤕"
+                ></textarea>
+            </div>
+
+            <div class="card" style="--c: var(--red)">
+                <span class="step">3️⃣ How bad does it feel?</span>
+                <div id="face">😐</div>
+                <div id="sevtxt">5 / 10 — Medium</div>
+                <input
+                    type="range"
+                    id="severity"
+                    min="1"
+                    max="10"
+                    value="5"
+                    oninput="face()"
+                />
+            </div>
+
+            <div class="card" style="--c: var(--green)">
+                <span class="step">4️⃣ Anything else? (tap all that match)</span>
+                <div class="chips" id="extras"></div>
+            </div>
+
+            <button class="go" onclick="check()">🔍 Ask Dr. Buddy!</button>
+
+            <div id="loading" style="margin: 22px 0">
+                <span>🩺</span><br />Dr. Buddy is thinking... beep boop!
+            </div>
+
+            <div class="card" id="result">
+                <div id="big"></div>
+                <div id="badge"></div>
+                <div class="meter">
+                    <div style="background: var(--green)"></div>
+                    <div style="background: var(--yellow)"></div>
+                    <div style="background: var(--orange)"></div>
+                    <div style="background: var(--red)"></div>
+                </div>
+                <p id="reason" style="font-size: 1.15rem; font-weight: 600"></p>
+                <h3>🩻 Could it be...? <small>(just guesses!)</small></h3>
+                <div id="conds"></div>
+                <h3>👉 What to do</h3>
+                <ul id="todo"></ul>
+                <small id="src"></small>
+            </div>
+
+            <p class="warn">
+                ⚠️ This is a school project and a game-like simulation. It is
+                NOT a real doctor. In a real emergency, tell an adult and call
+                your local emergency number!
+            </p>
+        </div>
+
+        <script>
+            const $ = (id) => document.getElementById(id);
+            const extras = [
+                "😓 Sweating",
+                "🤢 Nausea",
+                "😮‍💨 Shortness of breath",
+                "🌡️ Fever",
+                "🤮 Vomiting",
+                "😵 Dizziness",
+                "🤕 Headache",
+                "😷 Cough",
+            ];
+            const faces = [
+                "😄",
+                "🙂",
+                "🙂",
+                "😐",
+                "😕",
+                "😟",
+                "😣",
+                "😖",
+                "😭",
+                "😱",
+            ];
+            const words = [
+                "Tiny",
+                "Tiny",
+                "Small",
+                "Medium",
+                "Medium",
+                "Ouch",
+                "Ouch",
+                "Very bad",
+                "Super bad",
+                "Worst!",
+            ];
+            const info = {
+                emergency: { t: "EMERGENCY", e: "🚨", c: "#ff4757", i: 0 },
+                urgent: { t: "URGENT", e: "🏃", c: "#ff9f1c", i: 2 },
+                less_urgent: { t: "LESS URGENT", e: "🙂", c: "#e6b800", i: 1 },
+                low: { t: "LOW URGENCY", e: "😎", c: "#1fbf83", i: 0 },
+            };
+            const order = ["low", "less_urgent", "urgent", "emergency"];
+            const picked = new Set();
+
+            extras.forEach((t) => {
+                const c = document.createElement("span");
+                c.className = "chip";
+                c.textContent = t;
+                c.onclick = () => {
+                    picked.has(t) ? picked.delete(t) : picked.add(t);
+                    c.classList.toggle("on");
+                };
+                $("extras").appendChild(c);
+            });
+
+            function face() {
+                const v = $("severity").value;
+                $("face").textContent = faces[v - 1];
+                $("sevtxt").textContent = v + " / 10 — " + words[v - 1];
+                $("face").style.transform = "scale(" + (1 + v / 25) + ")";
+            }
+
+            function example(n) {
+                const e = {
+                    1: [
+                        55,
+                        "chest pressure, feeling very weak",
+                        "30 minutes",
+                        9,
+                        ["Sweating", "Nausea", "Shortness of breath"],
+                    ],
+                    2: [
+                        12,
+                        "runny nose and sneezing",
+                        "1-2 days",
+                        2,
+                        ["Cough"],
+                    ],
+                    3: [
+                        8,
+                        "hot body and very tired",
+                        "A few hours",
+                        7,
+                        ["Fever", "Headache"],
+                    ],
+                }[n];
+                $("age").value = e[0];
+                $("symptoms").value = e[1];
+                $("duration").value = e[2];
+                $("severity").value = e[3];
+                face();
+                picked.clear();
+                document.querySelectorAll("#extras .chip").forEach((c) => {
+                    const on = e[4].some((x) => c.textContent.includes(x));
+                    c.classList.toggle("on", on);
+                    if (on) picked.add(c.textContent);
+                });
+            }
+
+            async function check() {
+                const data = {
+                    age: +$("age").value,
+                    symptoms: $("symptoms").value,
+                    duration: $("duration").value,
+                    severity: +$("severity").value,
+                    extras: [...picked].map((x) => x.replace(/^\S+\s/, "")),
+                };
+                if (!data.symptoms.trim()) {
+                    alert("Please tell me the symptoms first! 📝");
+                    return;
+                }
+                $("loading").style.display = "block";
+                $("result").style.display = "none";
+                try {
+                    const r = await fetch("/api/triage", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(data),
+                    });
+                    show(await r.json());
+                } catch (e) {
+                    alert("Oops! Is the Python server running? 🐍");
+                }
+                $("loading").style.display = "none";
+            }
+
+            function show(r) {
+                const x = info[r.level] || info.low,
+                    box = $("result");
+                box.style.setProperty("--c", x.c);
+                box.style.borderColor = x.c;
+                box.style.display = "block";
+                $("big").textContent = x.e;
+                $("badge").textContent = x.t;
+                $("badge").style.background = x.c;
+                document
+                    .querySelectorAll(".meter div")
+                    .forEach((d, i) =>
+                        d.classList.toggle(
+                            "here",
+                            i === order.indexOf(r.level),
+                        ),
+                    );
+                $("reason").textContent = r.reason;
+                $("conds").innerHTML = r.possible_conditions
+                    .map((c) => `<span class="pill">${c}</span>`)
+                    .join("");
+                $("todo").innerHTML = r.what_to_do
+                    .map((t) => `<li>${t}</li>`)
+                    .join("");
+                $("src").textContent =
+                    r.source === "ai"
+                        ? "🤖 Answered by Gemini AI"
+                        : "📏 Answered by simple backup rules";
+                box.scrollIntoView({ behavior: "smooth" });
+            }
+        </script>
+    </body>
+</html>
